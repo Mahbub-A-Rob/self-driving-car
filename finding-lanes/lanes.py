@@ -32,11 +32,29 @@ def canny(image):
     canny = cv2.Canny(blur, 50, 150)
     return canny    
     
- 
+
+
+# Build region of interest meaning a traingle/polygonal shape
+def region_of_interest(image):
+    height = image.shape[0]
+    polygons = np.array([
+            [(200, height), (1100, height), (550, 250)]
+            ]) # check the image in plot to see the x, y axis value
+    mask = np.zeros_like(image) # create a mask using image
+    cv2.fillPoly(mask, polygons, 255) # 255 = white polygon
+    return mask
+
+
 canny = canny(lane_image)   
 
  
-# Show in a plot
-plt.imshow(canny)
-plt.show()
+# Show Image
+cv2.namedWindow('result', cv2.WINDOW_AUTOSIZE)
+cv2.imshow("result", region_of_interest(canny))
+
+#plt.imshow(canny)
+#plt.show(canny)
+
+cv2.waitKey(0)
+cv2.destroyWindow("result")
 
