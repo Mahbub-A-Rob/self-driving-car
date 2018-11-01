@@ -42,15 +42,20 @@ def region_of_interest(image):
             ]) # check the image in plot to see the x, y axis value
     mask = np.zeros_like(image) # create a mask using image
     cv2.fillPoly(mask, polygons, 255) # 255 = white polygon
-    return mask
+    masked_image = cv2.bitwise_and(image, mask) #apply bitwise and
+    return masked_image
 
 
 canny = canny(lane_image)   
-
+cropped_image = region_of_interest(canny)
  
-# Show Image
+# Create named window
 cv2.namedWindow('result', cv2.WINDOW_AUTOSIZE)
-cv2.imshow("result", region_of_interest(canny))
+
+
+
+# Show image
+cv2.imshow("result", cropped_image)
 
 #plt.imshow(canny)
 #plt.show(canny)
