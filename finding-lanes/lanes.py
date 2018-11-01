@@ -64,7 +64,11 @@ lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100,
                         np.array([]), minLineLength=40 , maxLineGap=5) # apply Hough Transformation
 
 line_image = display_lines(lane_image, lines)
-cv2.imshow("result", line_image)
+
+# blend the processed image with the original colored image
+combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
+
+cv2.imshow("result", combo_image)
 
 #plt.imshow(canny)
 #plt.show(canny)
