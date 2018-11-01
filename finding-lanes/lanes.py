@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 # First Step: Build Ednge Detection Algorithm
 # First convert image to gray scale
@@ -36,8 +36,7 @@ def canny(image):
 canny = canny(lane_image)   
 
  
-# Show Image
-cv2.namedWindow('result', cv2.WINDOW_AUTOSIZE)
-cv2.imshow("result", canny)
-cv2.waitKey(0)
-cv2.destroyWindow("result")
+# Show in a plot
+plt.imshow(canny)
+plt.show()
+
