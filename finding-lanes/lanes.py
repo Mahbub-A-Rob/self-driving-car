@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# First Step: Build Ednge Detection Algorithm
+# First Step: Build Edge Detection Algorithm
 # First convert image to gray scale
 # Second reduce noise using gausian filter or other filters
 
@@ -15,25 +15,13 @@ lane_image = np.copy(image)
 
 # Canny function
 def canny(image):
-    # Step 1: 
-    # Create a grayscale image
-    # Why? 
-    # 1. gray scale image has single channel where 
-    # colored image has more at least 3 channels, 
-    # So, gray scale computation is fast and less computing power needed. 
-    # And, we will detect lane lines using black and white color values
-    gray = cv2.cvtColor(lane_image, cv2.COLOR_RGB2GRAY)
-    
-    
-    # Step 2: Reduce noise - Apply Guasian Filter
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0) 
-    
-    # Find the strongest gradients of the image
     canny = cv2.Canny(blur, 50, 150)
     return canny    
     
 def display_lines(image, lines):
-    line_image = np.zeros_like(image) # creaet a black image
+    line_image = np.zeros_like(image) # create a black line image
     if lines is not None:
         for line in lines:
             #print(line)
@@ -53,26 +41,46 @@ def region_of_interest(image):
     return masked_image
 
 
-# Create named window
-cv2.namedWindow('result', cv2.WINDOW_AUTOSIZE)
+# =============================================================================
+# # Create named window
+# cv2.namedWindow('result', cv2.WINDOW_AUTOSIZE)
+# 
+# 
+# canny_image = canny(lane_image)   
+# cropped_image = region_of_interest(canny_image)
+# 
+# # Apply Hough Transformation
+# lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, 
+#                         np.array([]), minLineLength=40 , maxLineGap=5) 
+# 
+# line_image = display_lines(lane_image, lines)
+# 
+# # blend the processed image with the original colored image
+# combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
+# 
+# cv2.imshow("result", combo_image)
+# 
+# #plt.imshow(canny)
+# #plt.show(canny)
+# 
+# cv2.waitKey(0)
+# cv2.destroyWindow("result")
+# =============================================================================
 
-
-canny = canny(lane_image)   
-cropped_image = region_of_interest(canny)
-
-lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, 
-                        np.array([]), minLineLength=40 , maxLineGap=5) # apply Hough Transformation
-
-line_image = display_lines(lane_image, lines)
-
-# blend the processed image with the original colored image
-combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 1)
-
-cv2.imshow("result", combo_image)
-
-#plt.imshow(canny)
-#plt.show(canny)
-
-cv2.waitKey(0)
-cv2.destroyWindow("result")
-
+# Capture video
+cap = cv2.VideoCapture("test2.mp4")
+while(cap.isOpened()):
+    _, frame = cap.read()
+    canny_image = canny(frame)   
+    cropped_image = region_of_interest(canny_image)
+    lines = cv2.HoughLinesP(cropped_image, 2, np.pi/180, 100, 
+                            np.array([]), minLineLength=40 , maxLineGap=5) 
+    
+    line_image = display_lines(frame, lines)
+    combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+    cv2.imshow("result", combo_image)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
+cap.release()    
+cv2.destroyAllWindows()
+    
